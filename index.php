@@ -21,8 +21,29 @@
         } 
         return $ipbin;
     }
+    function bin2ip($bin) 
+    { 
+        if(strlen($bin) <= 32)  
+            return long2ip(base_convert($bin,2,10)); 
+        if(strlen($bin) != 128) 
+            return false; 
+        $pad = 128 - strlen($bin); 
+        for ($i = 1; $i <= $pad; $i++) 
+        { 
+            $bin = "0".$bin; 
+        } 
+        $bits = 0; 
+        $ipv6 = '';
+        while ($bits <= 7) 
+        { 
+            $bin_part = substr($bin,($bits*16),16); 
+            $ipv6 .= dechex(bindec($bin_part)).":"; 
+            $bits++; 
+        } 
+        return inet_ntop(inet_pton(substr($ipv6,0,-1))); 
+    }
 
-    echo "$ip e $mask";
+    echo "$ip e $mask <br>";
 ?>
 <html lang="pt-br">
 <head>
@@ -33,6 +54,10 @@
 </head>
 <body>
     <br>
+    <a href="https://tutorialspots.com/php-how-to-convert-ip-address-to-binary-string-or-hex-string-3561.html" target="_blank">
+        Funções
+    </a>
+    <br><br>
     <form method="post">
         Insira um Endereço IP:
         <input type="text" name="ip">
@@ -74,14 +99,20 @@
     </form>
     <br>
     <?php
-        list($ipQuad1, $ipQuad2, $ipQuad3, $ipQuad4) = explode(".", $ip);
-
-        list($ipQuad1bin, $ipQuad2bin, $ipQuad3bin, $ipQuad4bin) = explode(ip2bin($ip), 4);
-        
-        echo $ipQuad1bin;
-
         if(isset($_POST["mask"])){
-            echo "<table>
+            $ipArray = explode(".", $ip);
+            echo "<b>Endereço IP (Array): </b>";
+            var_dump($ipArray);
+
+            $ipbin = ip2bin($ip);
+            $ipbinArray = explode(1, $ipbin);
+            echo "<br><br>
+            <b>Endereço IP em Binário (Array - 0): </b>";
+            var_dump($ipbinArray);
+            echo "<br>".$ipbinArray[0];
+
+            echo "<hr>
+            <table>
                 <tr>
                     <th>Endereço IP</th>
                     <td>$ip</td>
@@ -92,10 +123,43 @@
                 </tr>
                 <tr>
                     <th>Endereço IP (Binário)</th>
-                    <td>".ip2bin($ip)."</td>
+                    <td>".$ipbin."</td>
                 </tr>
-            </table>";
+            </table>
+            <hr>";
+            
+            echo "<b> Verificação para o Endereço de Rede: </b>";
+            for($i = 1; $i <= 30; $i ++){
+                if($i <= $mask)
+                    echo "1";
+                else
+                    echo "0";
+            }
+            
+            $maskExemplo = "255.192.0.0";
+            $maskBin = ip2bin($maskExemplo);
+            echo "<hr>
+            <b> Máscara em Binário (Exemplo - ".$maskExemplo."): </b> ".$maskBin."<br><br>";
+
+            $maskBinArray = explode(0, $maskBin);
+            echo "<b>Máscara em Binário (Array - 1): </b>";
+            var_dump($maskBinArray);
+            echo "<br><br> <b> Quantidade de bits 1 na Máscara: </b>".strlen($maskBinArray[0]);
+
+            $maskBinArray = explode(1, $maskBin);
+            echo "<hr> <b>Máscara em Binário (Array - 0): </b>";
+            var_dump($maskBinArray);
+            echo "<br><br>";
+            for($i = 0; $i < count($maskBinArray); $i ++){
+                if($maskBinArray[$i] == "")
+                    echo "1";
+                else
+                    for($i2 = 1; $i < strlen($maskBinArray[$i]); $i ++){
+                        array_push ($maskBinArray, "0");
+                    }
+            }
+            echo bin2ip($maskBin);
         }
     ?>
-</body>z
+</body>
 </html>
