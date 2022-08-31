@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <?php
-    
     // Endereço IP
     $ip = isset($_POST["ip"]) ? $_POST["ip"] : 0;
 
@@ -26,10 +25,6 @@
 </head>
 <body>
     <br>
-    <a href="https://tutorialspots.com/php-how-to-convert-ip-address-to-binary-string-or-hex-string-3561.html" target="_blank">
-        Funções
-    </a>
-    <br><br>
     <form method="post">
         Insira um Endereço IP:
         <input type="text" name="ip">
@@ -45,7 +40,7 @@
                             $maskOptionBin .= "0";
                     }
                     $maskOptionDec = bin2ip($maskOptionBin);
-                    echo "<option value=".$maskOptionDec.">".$maskOptionDec."/".$i."</option>";
+                    echo "<option value=".$maskOptionDec."/".$i.">".$maskOptionDec."/".$i."</option>";
                 }
             ?>
         </select>
@@ -55,6 +50,8 @@
     <br>
     <?php
         if(isset($_POST["mask"])){
+            $maskAndBits = explode("/", $mask);
+
             // Endereços inseridos
             echo "$ip e $mask <br>";
 
@@ -62,17 +59,16 @@
             $ipbin = ip2bin($ip);
 
             // Endereço de Rede
-            $rede = long2ip((ip2long($ip)) & (ip2long($mask)));
+            $rede = long2ip((ip2long($ip)) & (ip2long($maskAndBits[0])));
 
             // Primeiro IP útil
             $primeiroIp = long2ip(ip2long($rede) | 1);
 
             // Último IP útil
-            $ultimoIp = long2ip(ip2long($rede) | ((~(ip2long($mask))) - 1));
+            $ultimoIp = long2ip(ip2long($rede) | ((~(ip2long($maskAndBits[0]))) - 1));
 
             // Endereço de Broadcast
-            $broadcast = long2ip(ip2long($rede) | (~(ip2long($mask))));
-        }
+            $broadcast = long2ip(ip2long($rede) | (~(ip2long($maskAndBits[0]))));
     ?>
     <p>Decimal:</p>
     <table>
@@ -101,5 +97,8 @@
             <td><?php echo $broadcast; ?></td>
         </tr>
     </table>
+    <?php
+        }
+    ?>
 </body>
 </html>
