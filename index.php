@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <?php
+    $title = "Calculadora de Endereços de Rede - por Pedro Ryan Coelho Iplinski";
+    
     $ip = isset($_POST["ip"]) ? $_POST["ip"] : 0;
     $mask = isset($_POST["mask"]) ? $_POST["mask"] : 0;
     
@@ -12,7 +14,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de endereços de rede</title>
+    <title><?php echo $title; ?></title>
     <style>
         td{
             font-family: "Courier New";
@@ -20,7 +22,7 @@
     </style>
 </head>
 <body>
-    <br>
+    <h3><?php echo $title; ?></h3><br>
     <form method="post">
         Insira um endereço IP: <input type="text" name="ip" value="<?php if(isset($_POST["ip"])) echo $ip; ?>"><br>
         <br>
