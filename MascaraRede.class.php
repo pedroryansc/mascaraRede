@@ -55,7 +55,8 @@
         }
 
         public function ip2bin($end){ 
-            return base_convert(ip2long($end), 10, 2);
+            $ipBin = base_convert(ip2long($end), 10, 2);
+            return implode(".", str_split($ipBin, 8));
         }
 
         public function __toString(){
